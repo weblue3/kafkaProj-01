@@ -1,3 +1,6 @@
 rootProject.name = 'KafkaProj-01'
 include 'producers'
+include 'producers:consumers'
+findProject(':producers:consumers')?.name = 'consumers'
+include 'consumers'
 
