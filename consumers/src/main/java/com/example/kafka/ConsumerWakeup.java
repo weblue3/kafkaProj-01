@@ -19,7 +19,7 @@ public class ConsumerWakeup {
 
     public static void main(String[] args) {
 
-        String topicName = "simple-topic";
+        String topicName = "pizza-topic";
 
         Properties props = new Properties();
         props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.0.6:9092");
@@ -28,7 +28,7 @@ public class ConsumerWakeup {
         props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_01");
         //props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");  //earliest, latest
         // 값이 없을때 earliest 설정해야 처음부터 값을 가져옴. 이미 값이 있다면 처음부터 값을 가져오지 않는다.
-        props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        //props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(props);
         kafkaConsumer.subscribe(List.of(topicName));
@@ -75,8 +75,8 @@ public class ConsumerWakeup {
                 ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(1000));
 
                 for (ConsumerRecord<String, String> record: consumerRecords) {
-                    logger.info("record key : {}, record value : {}, record partition : {}, record offset: {}"
-                            , record.key(), record.value(), record.partition(), record.offset());
+                    logger.info("record key : {}, record partition : {}, record offset: {}, record value : {}"
+                            , record.key(), record.partition(), record.offset(), record.value());
                 }
             }
         } catch (WakeupException e) {
