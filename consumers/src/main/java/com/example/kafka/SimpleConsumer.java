@@ -26,7 +26,10 @@ public class SimpleConsumer {
         props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.0.6:9092");
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_01");
+        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "simple-group");
+        //props.setProperty(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, "5000");
+        //props.setProperty(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "90000");
+        //props.setProperty(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, "600000");
 
         KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(props);
         kafkaConsumer.subscribe(List.of(topicName));
@@ -46,38 +49,15 @@ public class SimpleConsumer {
         * 일반적인 업무 시스템에서는 subscribe()를 사용하는 경우가 많습니다.
         * */
 
-        // main Thread
-        Thread mainThread = Thread.currentThread();
+        while (true) {
+            ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(1000));
 
-        // main thread 종료시 별도의 thread로 kafkaConsumer wakeup() 메소드를 호출하게 함.
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                logger.info(" main program starts to exit by calling wakeup");
-                kafkaConsumer.wakeup();
-
-                try {
-                    mainThread.join();
-                }catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            for (ConsumerRecord<String, String> record: consumerRecords) {
+                logger.info("record key : {}, record value : {}, record partition : {}"
+                        , record.key(), record.value(), record.partition());
             }
-        });
-
-        try {
-            while (true) {
-                ConsumerRecords<String, String> consumerRecords = kafkaConsumer.poll(Duration.ofMillis(1000));
-
-                for (ConsumerRecord<String, String> record: consumerRecords) {
-                    logger.info("record key : {}, record value : {}, record partition : {}"
-                            , record.key(), record.value(), record.partition());
-                }
-            }
-        } catch (WakeupException e) {
-            logger.error("wakeup exception has been called");
-        } finally {
-            logger.error("finally consumer is closing");
-            kafkaConsumer.close();
         }
+
+        // kafkaConsumer.close();
     }
 }
