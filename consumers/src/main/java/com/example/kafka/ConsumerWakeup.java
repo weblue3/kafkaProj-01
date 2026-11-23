@@ -25,7 +25,9 @@ public class ConsumerWakeup {
         props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.0.6:9092");
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_01");
+        //props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_01");
+        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group-01-static");
+        props.setProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, "3");         // Static Group Membership 활성화 설정
         //props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");  //earliest, latest
         // 값이 없을때 earliest 설정해야 처음부터 값을 가져옴. 이미 값이 있다면 처음부터 값을 가져오지 않는다.
         //props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
