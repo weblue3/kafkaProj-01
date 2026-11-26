@@ -3,4 +3,5 @@ include 'producers'
 include 'producers:consumers'
 findProject(':producers:consumers')?.name = 'consumers'
 include 'consumers'
+include 'practice'
 
